@@ -1,0 +1,479 @@
+<Window x:Class="FuelsenseMonitorApp.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings - Fuelsense Monitor Pro" Height="900" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#FF0D1117">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Settings Header -->
+        <Border Grid.Row="0" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="⚙️" FontSize="36" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <StackPanel>
+                        <TextBlock Text="SYSTEM SETTINGS" FontSize="28" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Configure monitoring parameters and application preferences" 
+                                   FontSize="16" Foreground="#FFADB5BD"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Content="❌ CLOSE" Foreground="White" 
+                        Padding="20,12" FontWeight="Bold" Click="CloseWindow_Click">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#FFDA3633" Offset="0"/>
+                            <GradientStop Color="#FFCF222E" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8" 
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Border>
+        
+        <!-- Large Settings Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Connection Settings -->
+                <Border Grid.Row="0" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="🔌" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="CONNECTION SETTINGS" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <TextBlock Text="Serial Port" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <ComboBox x:Name="PortComboBox" Background="#FF21262D" Foreground="White" 
+                                          BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <Border x:Name="ToggleBorder" 
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="1" CornerRadius="8">
+                                                    <ToggleButton x:Name="ToggleButton" 
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"
+                                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  ClickMode="Press"/>
+                                                </Border>
+                                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  Margin="12,0,30,0" VerticalAlignment="Center"/>
+                                                <Path x:Name="Arrow" HorizontalAlignment="Right" Margin="0,0,12,0"
+                                                      VerticalAlignment="Center" Fill="White" 
+                                                      Data="M 0 0 L 6 6 L 12 0 Z"/>
+                                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}">
+                                                    <Border Background="#FF21262D" BorderBrush="#FF30363D" 
+                                                            BorderThickness="1" CornerRadius="8" 
+                                                            MinWidth="{TemplateBinding ActualWidth}">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
+                                </ComboBox>
+                                
+                                <TextBlock Text="Connection Timeout (ms)" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <TextBox x:Name="TimeoutTextBox" Text="2000" Background="#FF21262D" Foreground="White" 
+                                         BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45">
+                                    <TextBox.Template>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="1" CornerRadius="8"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </TextBox.Template>
+                                </TextBox>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Baud Rate" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <ComboBox x:Name="BaudRateComboBox" Background="#FF21262D" Foreground="White" 
+                                          BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45" SelectedIndex="1">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <Border x:Name="ToggleBorder" 
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="1" CornerRadius="8">
+                                                    <ToggleButton x:Name="ToggleButton" 
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"
+                                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  ClickMode="Press"/>
+                                                </Border>
+                                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  Margin="12,0,30,0" VerticalAlignment="Center"/>
+                                                <Path x:Name="Arrow" HorizontalAlignment="Right" Margin="0,0,12,0"
+                                                      VerticalAlignment="Center" Fill="White" 
+                                                      Data="M 0 0 L 6 6 L 12 0 Z"/>
+                                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}">
+                                                    <Border Background="#FF21262D" BorderBrush="#FF30363D" 
+                                                            BorderThickness="1" CornerRadius="8" 
+                                                            MinWidth="{TemplateBinding ActualWidth}">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
+                                    <ComboBoxItem Content="9600"/>
+                                    <ComboBoxItem Content="115200"/>
+                                    <ComboBoxItem Content="57600"/>
+                                    <ComboBoxItem Content="38400"/>
+                                </ComboBox>
+                                
+                                <TextBlock Text="Auto-reconnect" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <CheckBox x:Name="AutoReconnectCheckBox" Content="Enable auto-reconnect when connection lost" 
+                                          Foreground="White" FontSize="14" IsChecked="True">
+                                    <CheckBox.Template>
+                                        <ControlTemplate TargetType="CheckBox">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border x:Name="CheckBorder" Width="20" Height="20" 
+                                                        Background="#FF21262D" BorderBrush="#FF30363D" 
+                                                        BorderThickness="1" CornerRadius="4" Margin="0,0,10,0">
+                                                    <Path x:Name="CheckMark" Stroke="#FF00D9FF" StrokeThickness="2.5" 
+                                                          Data="M 4,10 L 8,14 L 16,6" Visibility="Collapsed"/>
+                                                </Border>
+                                                <ContentPresenter Content="{TemplateBinding Content}" 
+                                                                  VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                                    <Setter TargetName="CheckBorder" Property="Background" Value="#FF1F6FEB"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </CheckBox.Template>
+                                </CheckBox>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Data Settings -->
+                <Border Grid.Row="1" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="📊" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="DATA SETTINGS" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <TextBlock Text="Sampling Rate (Hz)" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <Slider x:Name="SamplingRateSlider" Minimum="1" Maximum="10" Value="1" Height="30"
+                                        Background="Transparent" Foreground="#FF00D9FF">
+                                    <Slider.Template>
+                                        <ControlTemplate TargetType="Slider">
+                                            <Grid>
+                                                <Border Background="#FF30363D" Height="6" CornerRadius="3"/>
+                                                <Track x:Name="PART_Track">
+                                                    <Track.DecreaseRepeatButton>
+                                                        <RepeatButton Background="#FF00D9FF" BorderThickness="0" Height="6"/>
+                                                    </Track.DecreaseRepeatButton>
+                                                    <Track.Thumb>
+                                                        <Thumb Background="#FF00D9FF" Width="20" Height="20" 
+                                                               BorderBrush="White" BorderThickness="2">
+                                                            <Thumb.Template>
+                                                                <ControlTemplate>
+                                                                    <Ellipse Fill="{TemplateBinding Background}" 
+                                                                             Stroke="{TemplateBinding BorderBrush}" 
+                                                                             StrokeThickness="{TemplateBinding BorderThickness}"/>
+                                                                </ControlTemplate>
+                                                            </Thumb.Template>
+                                                        </Thumb>
+                                                    </Track.Thumb>
+                                                </Track>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Slider.Template>
+                                </Slider>
+                                <TextBlock x:Name="SamplingRateText" Text="1 Hz" Foreground="#FF00D9FF" 
+                                           FontSize="12" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                
+                                <TextBlock Text="Chart Data Points" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <TextBox x:Name="ChartPointsTextBox" Text="50" Background="#FF21262D" Foreground="White" 
+                                         BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Auto-export interval" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <ComboBox x:Name="AutoExportComboBox" Background="#FF21262D" Foreground="White" 
+                                          BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45" SelectedIndex="0">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <Border x:Name="ToggleBorder" 
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="1" CornerRadius="8">
+                                                    <ToggleButton x:Name="ToggleButton" 
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"
+                                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  ClickMode="Press"/>
+                                                </Border>
+                                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  Margin="12,0,30,0" VerticalAlignment="Center"/>
+                                                <Path x:Name="Arrow" HorizontalAlignment="Right" Margin="0,0,12,0"
+                                                      VerticalAlignment="Center" Fill="White" 
+                                                      Data="M 0 0 L 6 6 L 12 0 Z"/>
+                                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}">
+                                                    <Border Background="#FF21262D" BorderBrush="#FF30363D" 
+                                                            BorderThickness="1" CornerRadius="8" 
+                                                            MinWidth="{TemplateBinding ActualWidth}">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
+                                    <ComboBoxItem Content="Disabled"/>
+                                    <ComboBoxItem Content="Every 100 records"/>
+                                    <ComboBoxItem Content="Every 500 records"/>
+                                    <ComboBoxItem Content="Every 1000 records"/>
+                                </ComboBox>
+                                
+                                <TextBlock Text="Data validation" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <CheckBox x:Name="DataValidationCheckBox" Content="Enable data validation and filtering" 
+                                          Foreground="White" FontSize="14" IsChecked="True"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Display Settings -->
+                <Border Grid.Row="2" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="🎨" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="DISPLAY SETTINGS" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <TextBlock Text="Theme" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <ComboBox x:Name="ThemeComboBox" Background="#FF21262D" Foreground="White" 
+                                          BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45" SelectedIndex="0">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <Border x:Name="ToggleBorder" 
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="1" CornerRadius="8">
+                                                    <ToggleButton x:Name="ToggleButton" 
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"
+                                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  ClickMode="Press"/>
+                                                </Border>
+                                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  Margin="12,0,30,0" VerticalAlignment="Center"/>
+                                                <Path x:Name="Arrow" HorizontalAlignment="Right" Margin="0,0,12,0"
+                                                      VerticalAlignment="Center" Fill="White" 
+                                                      Data="M 0 0 L 6 6 L 12 0 Z"/>
+                                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}">
+                                                    <Border Background="#FF21262D" BorderBrush="#FF30363D" 
+                                                            BorderThickness="1" CornerRadius="8" 
+                                                            MinWidth="{TemplateBinding ActualWidth}">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
+                                    <ComboBoxItem Content="Dark (Current)"/>
+                                    <ComboBoxItem Content="Dark Blue"/>
+                                    <ComboBoxItem Content="Dark Purple"/>
+                                    <ComboBoxItem Content="High Contrast"/>
+                                </ComboBox>
+                                
+                                <TextBlock Text="Animations" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <CheckBox x:Name="AnimationsCheckBox" Content="Enable smooth animations and transitions" 
+                                          Foreground="White" FontSize="14" IsChecked="True"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Update Rate (ms)" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <TextBox x:Name="UpdateRateTextBox" Text="1000" Background="#FF21262D" Foreground="White" 
+                                         BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45"/>
+                                
+                                <TextBlock Text="Interface Options" Foreground="#FFADB5BD" FontSize="14" Margin="0,20,0,8"/>
+                                <CheckBox x:Name="ShowTooltipsCheckBox" Content="Show detailed tooltips and help text" 
+                                          Foreground="White" FontSize="14" IsChecked="True" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ShowGridLinesCheckBox" Content="Show grid lines in data table" 
+                                          Foreground="White" FontSize="14" IsChecked="True"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Alerts Settings -->
+                <Border Grid.Row="3" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="🚨" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="ALERT SETTINGS" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                                <TextBlock Text="High Temperature Alert (°C)" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <TextBox x:Name="TempAlertTextBox" Text="150" Background="#FF21262D" Foreground="White" 
+                                         BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45"/>
+                                <CheckBox x:Name="TempAlertCheckBox" Content="Enable temperature alerts" 
+                                          Foreground="White" FontSize="12" IsChecked="True" Margin="0,8,0,0"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1" Margin="7,0">
+                                <TextBlock Text="High RPM Alert" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <TextBox x:Name="RpmAlertTextBox" Text="4500" Background="#FF21262D" Foreground="White" 
+                                         BorderBrush="#FF30363D" Padding="12,10" FontSize="14" Height="45"/>
+                                <CheckBox x:Name="RpmAlertCheckBox" Content="Enable RPM alerts" 
+                                          Foreground="White" FontSize="12" IsChecked="True" Margin="0,8,0,0"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="2" Margin="15,0,0,0">
+                                <TextBlock Text="Notification Options" Foreground="#FFADB5BD" FontSize="14" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="SoundAlertsCheckBox" Content="Enable sound notifications" 
+                                          Foreground="White" FontSize="14" IsChecked="False" Margin="0,10,0,0"/>
+                                <CheckBox x:Name="PopupAlertsCheckBox" Content="Show popup alerts" 
+                                          Foreground="White" FontSize="14" IsChecked="True" Margin="0,8,0,0"/>
+                                <CheckBox x:Name="EmailAlertsCheckBox" Content="Send email notifications" 
+                                          Foreground="White" FontSize="14" IsChecked="False" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Action Buttons -->
+                <Border Grid.Row="4" Background="#FF161B22" CornerRadius="12" Padding="25">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="SaveSettingsButton" Content="💾 SAVE SETTINGS" Foreground="White" 
+                                Padding="25,12" Margin="15" FontWeight="Bold" Click="SaveSettingsButton_Click">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#FF238636" Offset="0"/>
+                                    <GradientStop Color="#FF1A7F37" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" 
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        
+                        <Button x:Name="ResetSettingsButton" Content="🔄 RESET TO DEFAULT" Foreground="White" 
+                                Padding="25,12" Margin="15" FontWeight="Bold" Click="ResetSettingsButton_Click">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#FFFD7E14" Offset="0"/>
+                                    <GradientStop Color="#FFBC4C00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" 
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        
+                        <Button x:Name="AboutButton" Content="ℹ️ ABOUT" Foreground="White" 
+                                Padding="25,12" Margin="15" FontWeight="Bold" Click="AboutButton_Click">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#FF7C3AED" Offset="0"/>
+                                    <GradientStop Color="#FF6F2DA8" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" 
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>
