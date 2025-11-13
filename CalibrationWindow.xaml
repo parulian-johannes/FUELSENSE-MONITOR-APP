@@ -1,0 +1,346 @@
+<Window x:Class="EngineMonitoring.CalibrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Calibration Center" Height="650" Width="850" 
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+    
+    <Window.Resources>
+        <!-- Solid Color Backgrounds -->
+        <SolidColorBrush x:Key="MainBackgroundBrush" Color="#0F1419"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="#1E293B"/>
+        <SolidColorBrush x:Key="ButtonGradient" Color="#2563EB"/>
+        
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonGradient}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#7C3AED"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#334155"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#64748B"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <!-- Main Window Border -->
+    <Border Background="{StaticResource MainBackgroundBrush}" 
+            CornerRadius="20" 
+            BorderBrush="#40FFFFFF" 
+            BorderThickness="2">
+        
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Custom Title Bar -->
+            <Grid Grid.Row="0" Height="40" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🎯" FontSize="20" Margin="10,0,10,0"/>
+                    <TextBlock Text="CALIBRATION CENTER" FontSize="16" FontWeight="Bold" 
+                               Foreground="#C0C0C0" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Content="✕" Width="35" Height="30" 
+                        Background="Transparent" BorderBrush="Transparent" 
+                        Foreground="#CCCCCC" FontSize="16" FontWeight="Bold"
+                        Click="CloseButton_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#E74C3C"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+            
+            <!-- Main Content -->
+            <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border x:Name="Border" Background="#334155" 
+                                            BorderBrush="#64748B" BorderThickness="1"
+                                            CornerRadius="8,8,0,0" Margin="5,0" Padding="15,10">
+                                        <ContentPresenter ContentSource="Header" 
+                                                          HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#2563EB"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#475569"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="FontSize" Value="13"/>
+                    </Style>
+                </TabControl.Resources>
+                
+            <TabItem Header="🔧 Torque Calibration">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource PanelBrush}">
+                <StackPanel Margin="20" Orientation="Vertical">
+                    
+                    <!-- Header Section -->
+                    <Border Background="#10000000" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                            BorderBrush="#40FFFFFF" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="⚡ TORQUE CALIBRATION PROCEDURE" FontWeight="Bold" FontSize="16" 
+                                       Foreground="#3B82F6" Margin="0,0,0,8"/>
+                            <TextBlock TextWrapping="Wrap" Foreground="#E2E8F0" FontSize="12" LineHeight="20">
+                                <Run Text="1. "/>
+                                <Run Text="Zero Calibration:" FontWeight="Bold"/>
+                                <Run Text=" Ensure no load on the system, then press 'Zero Calibration'."/>
+                                <LineBreak/>
+                                <Run Text="2. "/>
+                                <Run Text="Load Calibration:" FontWeight="Bold"/>
+                                <Run Text=" Place a known weight at a known arm length, then press 'Load Calibration'."/>
+                                <LineBreak/>
+                                <Run Text="3. The app will calculate scale factor = (expected torque Nm) / (delta raw reading)."/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Live Preview Panel -->
+                    <Border Background="#10000000" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                            BorderBrush="#3B82F6" BorderThickness="2">
+                        <StackPanel>
+                            <TextBlock Text="📊 LIVE SENSOR PREVIEW" FontWeight="Bold" FontSize="14" 
+                                       Foreground="#3B82F6" Margin="0,0,0,10"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border Grid.Column="0" Background="#1E293B" CornerRadius="8" Padding="12" Margin="0,0,5,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Raw Reading" Foreground="#94A3B8" FontSize="11"/>
+                                        <TextBlock x:Name="LatestRawText" Text="--" FontWeight="Bold" 
+                                                   Foreground="#3B82F6" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <Border Grid.Column="1" Background="#1E293B" CornerRadius="8" Padding="12" Margin="5,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Calibrated (Nm)" Foreground="#94A3B8" FontSize="11"/>
+                                        <TextBlock x:Name="CalibratedPreviewText" Text="--" FontWeight="Bold" 
+                                                   Foreground="#10B981" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <CheckBox x:Name="TorqueInputIsRawCheckBox" Margin="0,12,0,0"
+                                      Foreground="#C0C0C0" FontSize="12"
+                                      Content="✓ Input from logger is raw value (needs calibration)"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Calibration Buttons -->
+                    <Grid Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Button x:Name="ZeroCalibrateButton" Grid.Row="0" Grid.Column="0"
+                                Content="🔄 Zero Calibration" Margin="0,0,5,5"
+                                Style="{StaticResource ModernButtonStyle}" Height="45"
+                                Click="ZeroCalibrateButton_Click"/>
+                        
+                        <Button x:Name="LoadCalibrateButton" Grid.Row="0" Grid.Column="1"
+                                Content="⚖️ Load Calibration" Margin="5,0,0,5"
+                                Style="{StaticResource ModernButtonStyle}" Height="45"
+                                Click="LoadCalibrateButton_Click"/>
+                        
+                        <Button x:Name="SaveCalibrationButton" Grid.Row="1" Grid.Column="0"
+                                Content="💾 Save Calibration" Margin="0,5,5,0"
+                                Style="{StaticResource ModernButtonStyle}" Height="45"
+                                Click="SaveCalibrationButton_Click"/>
+                        
+                        <Button x:Name="ResetCalibrationButton" Grid.Row="1" Grid.Column="1"
+                                Content="🔃 Reset Calibration" Margin="5,5,0,0"
+                                Style="{StaticResource ModernButtonStyle}" Height="45"
+                                Click="ResetCalibrationButton_Click"/>
+                    </Grid>
+
+                    <!-- Input Parameters -->
+                    <Border Background="#10000000" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                            BorderBrush="#40FFFFFF" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="📝 CALIBRATION PARAMETERS" FontWeight="Bold" FontSize="14" 
+                                       Foreground="#A855F7" Margin="0,0,0,12"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Calibration Weight (kg):" 
+                                           Foreground="#E2E8F0" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox x:Name="CalibrationWeightTextBox" Grid.Row="0" Grid.Column="1" 
+                                         Text="51.8" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,0,10"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Arm Length (m):" 
+                                           Foreground="#E2E8F0" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox x:Name="ArmLengthTextBox" Grid.Row="1" Grid.Column="1" 
+                                         Text="0.305" Style="{StaticResource ModernTextBoxStyle}" 
+                                         IsReadOnly="True" Background="#1E293B" Margin="0,0,0,10"
+                                         ToolTip="Fixed arm length value (read-only)"/>
+                            </Grid>
+                            
+                            <!-- Keterangan Panjang Lengan di bawah grid -->
+                            <TextBlock Text="* Panjang lengan yaitu 0.305 m" 
+                                       Foreground="#94A3B8" FontSize="11" FontStyle="Italic" 
+                                       Margin="0,5,0,0" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Status Section -->
+                    <Border Background="#10000000" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                            BorderBrush="#F59E0B" BorderThickness="2">
+                        <StackPanel>
+                            <TextBlock Text="📢 STATUS" FontWeight="Bold" FontSize="14" 
+                                       Foreground="#F59E0B" Margin="0,0,0,8"/>
+                            <TextBlock x:Name="StatusText" Text="Ready" TextWrapping="Wrap" 
+                                       Foreground="#C0C0C0" FontSize="13" LineHeight="18"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Calibration Info -->
+                    <Border Background="#10000000" CornerRadius="10" Padding="15"
+                            BorderBrush="#40FFFFFF" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="📈 CALIBRATION INFO" FontWeight="Bold" FontSize="14" 
+                                       Foreground="#10B981" Margin="0,0,0,12"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Weight on Calibration:" 
+                                           Foreground="#94A3B8" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="InfoWeightText" Grid.Row="0" Grid.Column="1" 
+                                           Text="-" FontWeight="Bold" Foreground="#C0C0C0" Margin="0,0,0,8"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Calculated Torque:" 
+                                           Foreground="#94A3B8" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="InfoTorqueText" Grid.Row="1" Grid.Column="1" 
+                                           Text="-" FontWeight="Bold" Foreground="#C0C0C0" Margin="0,0,0,8"/>
+                                
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Raw Reading (Average):" 
+                                           Foreground="#94A3B8" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="InfoRawText" Grid.Row="2" Grid.Column="1" 
+                                           Text="-" FontWeight="Bold" Foreground="#C0C0C0" Margin="0,0,0,8"/>
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="% of Capacity:" 
+                                           Foreground="#94A3B8"/>
+                                <TextBlock x:Name="InfoPercentText" Grid.Row="3" Grid.Column="1" 
+                                           Text="-" FontWeight="Bold" Foreground="#10B981"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="⚖️ Scale Calibration">
+                <Border Background="{StaticResource PanelBrush}" Padding="40">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="⚖️" FontSize="60" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                        <TextBlock Text="SCALE CALIBRATION MODULE" FontSize="18" FontWeight="Bold" 
+                                   Foreground="#C0C0C0" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Load cell calibration is available as a separate module." 
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" FontSize="13" Margin="0,0,0,8"/>
+                        <TextBlock Text="Click the button below to open the Scale Calibration window." 
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" FontSize="13" Margin="0,0,0,25"/>
+                        <Button x:Name="OpenScaleCalibrationButton" 
+                                Content="🔓 Open Scale Calibration" 
+                                Width="250" Height="50"
+                                Style="{StaticResource ModernButtonStyle}" 
+                                FontSize="14"
+                                Click="OpenScaleCalibrationButton_Click"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+        </TabControl>
+        </Grid>
+    </Border>
+</Window>

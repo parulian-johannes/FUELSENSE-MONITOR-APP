@@ -1,0 +1,608 @@
+<Window x:Class="EngineMonitoring.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:scottplot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
+    xmlns:controls="clr-namespace:EngineMonitoring.Controls"
+    Title="EMSys - Engine Monitoring System" Height="900" Width="1600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="Segoe UI Variable Display, Segoe UI, Inter, -apple-system, sans-serif">
+    
+    <Window.Resources>
+        <!-- DYNAMIC THEME SYSTEM - Dark/Light Mode -->
+        <!-- Dark Theme Colors -->
+        <SolidColorBrush x:Key="DarkBackground" Color="#0A0A0A"/>
+        <SolidColorBrush x:Key="DarkPanel" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="DarkBorder" Color="#2A2A2A"/>
+        <SolidColorBrush x:Key="DarkText" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="DarkTextSecondary" Color="#CBD5E1"/>
+        
+        <!-- Light Theme Colors -->
+        <SolidColorBrush x:Key="LightBackground" Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="LightPanel" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="LightBorder" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="LightText" Color="#1E293B"/>
+        <SolidColorBrush x:Key="LightTextSecondary" Color="#475569"/>
+        
+        <!-- Accent Colors (Same for both themes) -->
+        <SolidColorBrush x:Key="AccentBlue" Color="#1E3A8A"/>
+        <SolidColorBrush x:Key="AccentBlueHover" Color="#1E40AF"/>
+        <SolidColorBrush x:Key="AccentBluePressed" Color="#172554"/>
+        
+        <!-- Active Theme Brushes (Will be changed dynamically) -->
+        <SolidColorBrush x:Key="MainBackgroundBrush" Color="#0A0A0A"/>
+        <SolidColorBrush x:Key="PanelBackground" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="ModernPanelBrush" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#2A2A2A"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#CBD5E1"/>
+        
+        <!-- Modern Button Style - SOLID BLUE -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBlueHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentBluePressed}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <!-- Futuristic Window Frame -->
+    <Border Background="{StaticResource MainBackgroundBrush}" 
+            CornerRadius="20" 
+            BorderBrush="#40FFFFFF" 
+            BorderThickness="2">
+        
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Custom Title Bar -->
+            <Grid Grid.Row="0" Height="40" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="EMSys - Engine Monitoring System" FontSize="16" FontWeight="Bold" 
+                               Foreground="#D0D0D0" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" Margin="10,0,0,0"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <!-- Minimize Button -->
+                    <Button Width="35" Height="30" Margin="3,0" Click="MinimizeButton_Click"
+                            Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                        CornerRadius="6" Padding="8">
+                                    <Path x:Name="icon" Fill="#CCCCCC" Stretch="Uniform" 
+                                          Width="14" Height="14" 
+                                          Data="M2,7 L10,7 L10,8 L2,8 Z"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#3498DB"/>
+                                        <Setter TargetName="icon" Property="Fill" Value="#D0D0D0"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#2980B9"/>
+                                        <Setter TargetName="icon" Property="Fill" Value="#FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    
+                    <!-- Close Button -->
+                    <Button Width="35" Height="30" Margin="3,0" Click="CloseButton_Click"
+                            Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                        CornerRadius="6" Padding="8">
+                                    <Path x:Name="icon" Stroke="#CCCCCC" StrokeThickness="1.5" 
+                                          Stretch="Uniform" Width="12" Height="12" 
+                                          Data="M1,1 L11,11 M1,11 L11,1"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#E74C3C"/>
+                                        <Setter TargetName="icon" Property="Stroke" Value="#D0D0D0"/>
+                                        <Setter TargetName="icon" Property="StrokeThickness" Value="2"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#C0392B"/>
+                                        <Setter TargetName="icon" Property="Stroke" Value="#FFFFFF"/>
+                                        <Setter TargetName="icon" Property="StrokeThickness" Value="2.5"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            
+            <!-- RPM Alert Notification Panel -->
+            <Border x:Name="RpmAlertPanel" Grid.Row="1" 
+                    Background="#E74C3C" 
+                    CornerRadius="8" 
+                    Padding="15" 
+                    Margin="0,0,0,10"
+                    BorderBrush="#C0392B" 
+                    BorderThickness="2"
+                    Visibility="Collapsed">
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Warning Icon -->
+                    <Border Grid.Column="0" Background="#FFFFFF" 
+                            Width="40" Height="40" CornerRadius="20" 
+                            Margin="0,0,15,0" VerticalAlignment="Center">
+                        <Path Fill="#E74C3C" Stretch="Uniform" 
+                              Width="24" Height="24"
+                              Data="M12,2 L21,20 L3,20 Z M12,8 L12,14 M12,16 L12,18"
+                              Stroke="#E74C3C" StrokeThickness="2"/>
+                    </Border>
+                    
+                    <!-- Alert Message -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="⚠ HIGH RPM WARNING!" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Foreground="#F1F5F9" 
+                                   FontFamily="Segoe UI">
+                        </TextBlock>
+                        <TextBlock x:Name="RpmAlertText" 
+                                   Text="Engine RPM has exceeded 5000! Monitor engine temperature and performance." 
+                                   FontSize="12" 
+                                   Foreground="#FFE5E5" 
+                                   FontFamily="Segoe UI Light"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                    
+                    <!-- Close Alert Button -->
+                    <Button Grid.Column="2" Content="?" 
+                            Width="25" Height="25" 
+                            Background="Transparent" 
+                            BorderBrush="Transparent" 
+                            Foreground="#D0D0D0" 
+                            FontSize="14" FontWeight="Bold"
+                            VerticalAlignment="Top"
+                            Click="CloseRpmAlert_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" 
+                                        CornerRadius="12">
+                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#40FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+            
+            <!-- Clean Header -->
+            <Border x:Name="HeaderBorder" Grid.Row="2" 
+                    Background="{StaticResource ModernPanelBrush}" 
+                    CornerRadius="8" 
+                    Padding="25" 
+                    Margin="0,0,0,15"
+                    BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="EMSys - Engine Monitoring System" FontSize="26" FontWeight="Bold" 
+                                       Foreground="{StaticResource TextPrimary}" FontFamily="Segoe UI">
+                            </TextBlock>
+                            <TextBlock Text="Dasbor Pemantauan Mesin Secara Real-time" FontSize="13" 
+                                       Foreground="{StaticResource TextSecondary}" FontFamily="Segoe UI Light"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,25,0">
+                                <TextBlock Text="CONNECTION" FontSize="10" Foreground="#E0E0E0" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse x:Name="ConnectionStatus" Width="12" Height="12" Fill="#CCCCCC" Margin="0,0,8,0"/>
+                                    <TextBlock x:Name="ConnectionText" Text="OFFLINE" FontSize="13" 
+                                               FontWeight="Bold" Foreground="#D0D0D0" FontFamily="Segoe UI"/>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="TIME" FontSize="10" Foreground="#E0E0E0" FontWeight="Bold"/>
+                                <TextBlock x:Name="SessionTime" Text="00:00:00" FontSize="13" FontWeight="Bold" 
+                                           Foreground="#D0D0D0" FontFamily="Segoe UI"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Control Panel -->
+            <Border Grid.Row="3" Background="{StaticResource ModernPanelBrush}" 
+                    CornerRadius="15" 
+                    Padding="15" 
+                    Margin="0,0,0,15"
+                    BorderBrush="#20FFFFFF" 
+                    BorderThickness="1">
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="⚙ CONTROL CENTER" FontSize="14" FontWeight="Bold" 
+                               Foreground="#CBD5E1" VerticalAlignment="Center" 
+                               Margin="0,0,30,0" FontFamily="Segoe UI">
+                    </TextBlock>
+                    
+                    <!-- Main Control Buttons -->
+                    <Button x:Name="StartButton" Content="START" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Padding="25,12" Margin="8,0" FontSize="14" FontWeight="Bold"
+                            Click="StartButton_Click"/>
+                    <Button x:Name="StopButton" Content="STOP" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Padding="25,12" Margin="8,0" FontSize="14" FontWeight="Bold"
+                            Click="StopButton_Click" IsEnabled="False"/>
+                    <Button x:Name="ClearDataButton" Content="CLEAR" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Padding="20,12" Margin="8,0" FontSize="13"
+                            Click="ClearDataButton_Click"/>
+                    <Button x:Name="ResetSpeedometersButton" Content="RESET" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Padding="20,12" Margin="8,0" FontSize="13"
+                            Click="ResetSpeedometersButton_Click"/>
+                    <Button x:Name="ExportDataButton" Content="EXPORT" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Padding="20,12" Margin="8,0" FontSize="13"
+                            Click="ExportDataButton_Click"/>
+            <!-- Test RPM alert button removed per request; notification still triggers at RPM >= 5000 -->
+                </StackPanel>
+            </Border>
+            
+            <!-- Speedometer Dashboard -->
+            <Border Grid.Row="4" Background="{StaticResource ModernPanelBrush}" 
+                    CornerRadius="15" 
+                    Padding="20" 
+                    Margin="0,0,0,15"
+                    BorderBrush="#20FFFFFF" 
+                    BorderThickness="1">
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Speedometers Panel -->
+                    <Border Grid.Column="0" Background="#10000000" 
+                            CornerRadius="12" 
+                            Padding="25" 
+                            Margin="0,0,15,0"
+                            BorderBrush="#30FFFFFF" 
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Live Analytics Header -->
+                            <Grid Grid.Row="0" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="📊 LIVE ANALYTICS DASHBOARD" FontSize="18" FontWeight="Bold" 
+                                               Foreground="#F1F5F9" VerticalAlignment="Center" FontFamily="Segoe UI">
+                                    </TextBlock>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button x:Name="OpenChartButton" Content="CHART" 
+                                            Style="{StaticResource ModernButtonStyle}"
+                                            Padding="15,8" Margin="8,0" FontSize="12" 
+                                            Click="OpenChartButton_Click"/>
+                                    <Button x:Name="OpenAnalyticsButton" Content="ANALYTICS" 
+                                            Style="{StaticResource ModernButtonStyle}"
+                                            Padding="15,8" Margin="8,0" FontSize="12" 
+                                            Click="OpenAnalyticsButton_Click"/>
+                                    <Button x:Name="OpenDataTableButton" Content="TABLE" 
+                                            Style="{StaticResource ModernButtonStyle}"
+                                            Padding="15,8" Margin="8,0" FontSize="12" 
+                                            Click="OpenDataTableButton_Click"/>
+                                    <Button x:Name="OpenSettingsButton" Content="SETTINGS" 
+                                            Style="{StaticResource ModernButtonStyle}"
+                                            Padding="15,8" Margin="8,0" FontSize="12" 
+                        Click="OpenSettingsButton_Click"/>
+                    <Button x:Name="OpenCalibrationButton" Content="CALIBRATION" 
+                        Style="{StaticResource ModernButtonStyle}"
+                        Padding="15,8" Margin="8,0" FontSize="12"
+                        Click="OpenCalibrationButton_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <!-- Speedometers Grid -->
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- RPM Speedometer -->
+                                <Viewbox Grid.Row="0" Grid.Column="0" Margin="15" Stretch="Uniform">
+                                    <controls:SpeedometerControl x:Name="RpmSpeedometer"
+                                                                 Title="RPM"
+                                                                 Unit="rpm"
+                                                                 MinValue="0"
+                                                                 MaxValue="8000"
+                                                                 Value="0"/>
+                                </Viewbox>
+                                
+                                <!-- Torsi Speedometer -->
+                                <Viewbox Grid.Row="0" Grid.Column="1" Margin="15" Stretch="Uniform">
+                                    <controls:SpeedometerControl x:Name="TorsiSpeedometer"
+                                                                 Title="TORQUE"
+                                                                 Unit="Nm"
+                                                                 MinValue="0"
+                                                                 MaxValue="500"
+                                                                 Value="0"/>
+                                </Viewbox>
+                                
+                                <!-- Temperature Speedometer -->
+                                <Viewbox Grid.Row="0" Grid.Column="2" Margin="15" Stretch="Uniform">
+                                    <controls:SpeedometerControl x:Name="TempSpeedometer"
+                                                                 Title="TEMP"
+                                                                 Unit="°C"
+                                                                 MinValue="0"
+                                                                 MaxValue="150"
+                                                                 Value="0"/>
+                                </Viewbox>
+                                
+                                <!-- MAF Speedometer -->
+                                <Viewbox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="15,15,45,15" Stretch="Uniform">
+                                    <controls:SpeedometerControl x:Name="MafSpeedometer"
+                                                                 Title="MAF"
+                                                                 Unit="g/s"
+                                                                 MinValue="0"
+                                                                 MaxValue="100"
+                                                                 Value="0"/>
+                                </Viewbox>
+                                
+                                <!-- BBM Speedometer -->
+                                <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="45,15,15,15" Stretch="Uniform">
+                                    <controls:SpeedometerControl x:Name="BbmSpeedometer"
+                                                                 Title="FUEL"
+                                                                 Unit="L/h"
+                                                                 MinValue="0"
+                                                                 MaxValue="50"
+                                                                 Value="0"/>
+                                </Viewbox>
+                                
+                            </Grid>
+                        </Grid>
+                    </Border>
+                
+                    <!-- Telemetry Control Panel -->
+                    <Border Grid.Column="1" Background="#10000000" 
+                            CornerRadius="12" 
+                            Padding="15"
+                            BorderBrush="#30FFFFFF" 
+                            BorderThickness="1">
+                        
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Text="📡 TELEMETRY MONITOR" FontSize="16" FontWeight="Bold" 
+                                           Foreground="#F1F5F9" HorizontalAlignment="Center" 
+                                           Margin="0,0,0,15" FontFamily="Segoe UI">
+                                </TextBlock>
+                                
+                                <!-- Clean Value Cards - Unified Theme -->
+                                <!-- 1. ENGINE RPM -->
+                                <Border Background="#1E293B" 
+                                        BorderBrush="#3B82F6" 
+                                        BorderThickness="1.5"
+                                        CornerRadius="8" 
+                                        Padding="12" 
+                                        Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="ENGINE RPM" FontSize="11" Foreground="#94A3B8" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="RpmValue" Text="0 rpm" FontSize="18" FontWeight="Bold" 
+                                                   Foreground="#F1F5F9" FontFamily="Segoe UI"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- 2. ENGINE TORQUE -->
+                                <Border Background="#1E293B" 
+                                        BorderBrush="#3B82F6" 
+                                        BorderThickness="1.5"
+                                        CornerRadius="8" 
+                                        Padding="12" 
+                                        Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="ENGINE TORQUE" FontSize="11" Foreground="#94A3B8" FontWeight="SemiBold" 
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="TorqueValue" Text="0.0 Nm" FontSize="18" FontWeight="Bold" 
+                                                   Foreground="#F1F5F9" FontFamily="Segoe UI" 
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- 3. THERMAL STATE -->
+                                <Border Background="#1E293B" 
+                                        BorderBrush="#3B82F6" 
+                                        BorderThickness="1.5"
+                                        CornerRadius="8" 
+                                        Padding="12" 
+                                        Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="THERMAL STATE" FontSize="11" Foreground="#94A3B8" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="TempValue" Text="0.0°C" FontSize="18" FontWeight="Bold" 
+                                                   Foreground="#F1F5F9" FontFamily="Segoe UI"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- 4. FUEL CONSUMPTION -->
+                                <Border Background="#1E293B" 
+                                        BorderBrush="#3B82F6" 
+                                        BorderThickness="1.5"
+                                        CornerRadius="8" 
+                                        Padding="12" 
+                                        Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="FUEL CONSUMPTION" FontSize="11" Foreground="#94A3B8" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="FuelValue" Text="0.0 liter" FontSize="18" FontWeight="Bold" 
+                                                   Foreground="#F1F5F9" FontFamily="Segoe UI"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- 5. MAF FLOW -->
+                                <Border Background="#1E293B" 
+                                        BorderBrush="#3B82F6" 
+                                        BorderThickness="1.5"
+                                        CornerRadius="8" 
+                                        Padding="12" 
+                                        Margin="0,0,0,15">
+                                    <StackPanel>
+                                        <TextBlock Text="MAF FLOW" FontSize="11" Foreground="#94A3B8" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="MafValue" Text="0.0 m/s" FontSize="18" FontWeight="Bold" 
+                                                   Foreground="#F1F5F9" FontFamily="Segoe UI"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
+            
+            <!-- Status Interface -->
+            <Border Grid.Row="5" Background="#10000000" 
+                    CornerRadius="15" 
+                    Padding="20"
+                    BorderBrush="#40FFFFFF" 
+                    BorderThickness="1">
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" x:Name="StatusText" 
+                               Text="✓ Engine Monitoring v3.0 - Interface Ready" 
+                               Foreground="#CBD5E1" FontSize="13" VerticalAlignment="Center" 
+                               FontFamily="Segoe UI">
+                    </TextBlock>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Border Background="#0A0F1C" 
+                                BorderBrush="#CCCCCC" 
+                                BorderThickness="1"
+                                CornerRadius="5" 
+                                Padding="8,4" 
+                                Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊 Records: " FontSize="10" Foreground="#CCCCCC" FontFamily="Segoe UI"/>
+                                <TextBlock x:Name="RecordCountStatus" Text="0" FontSize="10" FontWeight="Bold" 
+                                           Foreground="#CCCCCC" FontFamily="Segoe UI"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Background="#0A0F1C" 
+                                BorderBrush="#CCCCCC" 
+                                BorderThickness="1"
+                                CornerRadius="5" 
+                                Padding="8,4" 
+                                Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⏱ Session: " FontSize="10" Foreground="#CCCCCC" FontFamily="Segoe UI"/>
+                                <TextBlock x:Name="SessionTimeText" Text="00:00:00" FontSize="10" FontWeight="Bold" 
+                                           Foreground="#CCCCCC" FontFamily="Segoe UI"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <TextBlock x:Name="PortInfo" Text="LINK-OFFLINE" FontSize="11" 
+                                   Foreground="#80FFFF" VerticalAlignment="Center" Margin="0,0,15,0" FontFamily="Segoe UI"/>
+                        <TextBlock Text="� 2025 Engine Monitoring" FontSize="11" 
+                                   Foreground="#60FFFF" VerticalAlignment="Center" FontFamily="Segoe UI Light"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
