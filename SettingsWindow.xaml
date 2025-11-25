@@ -366,7 +366,7 @@
                     </StackPanel>
                 </Border>
                 
-                <!-- Alerts Settings -->
+                <!-- Alert Settings -->
                 <Border Grid.Row="3" Background="#FF161B22" CornerRadius="12" Padding="25" Margin="0,0,0,20">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">

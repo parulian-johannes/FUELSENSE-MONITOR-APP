@@ -21,7 +21,7 @@ namespace EngineMonitoring
         {
             try
             {
-                if (data == null)
+                if (data == null || data.Count == 0)
                 {
                     MessageBox.Show("No data provided to Chart Window", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Close();
@@ -29,7 +29,12 @@ namespace EngineMonitoring
                 }
                 
                 sensorDataCollection = data;
-                UpdateChart();
+                
+                // Update chart after window is fully loaded
+                Dispatcher.BeginInvoke(new Action(() => 
+                {
+                    UpdateChart();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
             }
             catch (Exception ex)
             {
@@ -43,6 +48,8 @@ namespace EngineMonitoring
         {
             try
             {
+                if (MainChart == null) return;
+                
 #pragma warning disable CA1416
                 MainChart.Plot.Title("Live Sensor Analytics - Full View");
                 MainChart.Plot.XLabel("Data Points");
@@ -53,7 +60,9 @@ namespace EngineMonitoring
             }
             catch (Exception ex)
             {
-                ChartStatusText.Text = $"Chart init error: {ex.Message}";
+                if (ChartStatusText != null)
+                    ChartStatusText.Text = $"Chart init error: {ex.Message}";
+                Console.WriteLine($"InitializeChart Error: {ex}");
             }
         }
 

@@ -21,6 +21,7 @@ namespace EngineMonitoring
         private DispatcherTimer sessionTimer = new();
         private bool isMonitoring = false;
         private SerialService serialService = new();
+        private FuelSenseApiClient apiClient = new();
 
         // Theme System
         private bool isDarkMode = true;
@@ -62,6 +63,7 @@ namespace EngineMonitoring
             InitializeData();
             SetupTimers();
             SetupSensorLabels();
+            CheckWebsiteConnection();
             
             StatusText.Text = "Application initialized successfully!";
         }
@@ -227,6 +229,9 @@ namespace EngineMonitoring
         {
             var settingsWindow = new SettingsWindow();
             settingsWindow.ShowDialog();
+            
+            // API always enabled - no need to apply settings
+            // Data automatically sent to https://capstone-website-snowy.vercel.app
         }
 
         private void OpenCalibrationButton_Click(object sender, RoutedEventArgs e)
@@ -333,6 +338,25 @@ namespace EngineMonitoring
                     data.Torque = calibratedTorque;
 
                     sensorDataCollection.Add(data);
+
+                    // Send data to API asynchronously (non-blocking)
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await apiClient.SendSensorDataAsync(
+                                rpm: data.RPM,
+                                torque: calibratedTorque,
+                                maf: data.MAF,
+                                temperature: data.Temperature,
+                                fuelConsumption: data.Fuel // Fuel mapped to fuelConsumption
+                            );
+                        }
+                        catch (Exception apiEx)
+                        {
+                            Console.WriteLine($"[API] Background send error: {apiEx.Message}");
+                        }
+                    });
 
                     // Update live values display - KOMA desimal TANPA thousands separator
                     // Torque: 2,74 | Fuel: 434,29 | Temp: 80,50 | MAF: 0,00
@@ -751,5 +775,42 @@ namespace EngineMonitoring
             }
         }
         */
+
+        // Website Connection Check
+        private async void CheckWebsiteConnection()
+        {
+            try
+            {
+                var isConnected = await apiClient.CheckConnectionAsync();
+                
+                Dispatcher.Invoke(() =>
+                {
+                    if (isConnected)
+                    {
+                        WebConnectionIndicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981"));
+                        WebConnectionText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981"));
+                        WebConnectionText.Text = "Website Connected";
+                        Console.WriteLine("✅ [WEBSITE] Connected to https://capstone-website-snowy.vercel.app");
+                    }
+                    else
+                    {
+                        WebConnectionIndicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
+                        WebConnectionText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
+                        WebConnectionText.Text = "Website Offline";
+                        Console.WriteLine("❌ [WEBSITE] Cannot reach server");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WEBSITE] Connection check error: {ex.Message}");
+                Dispatcher.Invoke(() =>
+                {
+                    WebConnectionIndicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B"));
+                    WebConnectionText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B"));
+                    WebConnectionText.Text = "Connection Error";
+                });
+            }
+        }
     }
 }

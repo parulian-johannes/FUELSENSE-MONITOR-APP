@@ -8,6 +8,8 @@ namespace EngineMonitoring
 {
     public partial class SettingsWindow : Window
     {
+        public AppSettings CurrentSettings { get; private set; }
+        
         public SettingsWindow()
         {
             InitializeComponent();
@@ -107,6 +109,7 @@ namespace EngineMonitoring
 
                 // Save all settings
                 var settings = CollectSettings();
+                CurrentSettings = settings; // Store for MainWindow to access
                 SaveSettingsToConfig(settings);
 
                 var message = "Settings saved successfully!\n\n";

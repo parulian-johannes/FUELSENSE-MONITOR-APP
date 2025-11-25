@@ -21,7 +21,7 @@ namespace EngineMonitoring
             {
                 InitializeComponent();
                 
-                if (data == null)
+                if (data == null || data.Count == 0)
                 {
                     MessageBox.Show("No data provided to Analytics Window", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Close();
@@ -33,7 +33,12 @@ namespace EngineMonitoring
                 
                 InitializeChart();
                 InitializeTimers();
-                UpdateAnalytics();
+                
+                // Initial update after everything is initialized
+                Dispatcher.BeginInvoke(new Action(() => 
+                {
+                    UpdateAnalytics();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
             }
             catch (Exception ex)
             {
@@ -47,35 +52,68 @@ namespace EngineMonitoring
         {
             try
             {
+                if (SensorChart == null) return;
+                
+#pragma warning disable CA1416
                 SensorChart.Plot.Palette = ScottPlot.Palette.Dark;
                 SensorChart.Plot.YLabel("Sensor Values");
                 SensorChart.Plot.XLabel("Time");
                 SensorChart.Plot.Title("Real-Time Sensor Data Analytics");
                 SensorChart.Refresh();
+#pragma warning restore CA1416
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"Chart initialization error: {ex.Message}";
+                if (StatusText != null)
+                    StatusText.Text = $"Chart initialization error: {ex.Message}";
+                Console.WriteLine($"InitializeChart Error: {ex}");
             }
         }
 
         private void InitializeTimers()
         {
-            // Refresh timer for updating analytics
-            refreshTimer = new DispatcherTimer
+            try
             {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            refreshTimer.Tick += (s, e) => UpdateAnalytics();
-            refreshTimer.Start();
+                // Refresh timer for updating analytics (slower interval to reduce load)
+                refreshTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(2)
+                };
+                refreshTimer.Tick += (s, e) => 
+                {
+                    try
+                    {
+                        UpdateAnalytics();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Timer UpdateAnalytics Error: {ex}");
+                    }
+                };
+                refreshTimer.Start();
 
-            // Session timer for tracking duration
-            sessionTimer = new DispatcherTimer
+                // Session timer for tracking duration
+                sessionTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(1)
+                };
+                sessionTimer.Tick += (s, e) => 
+                {
+                    try
+                    {
+                        UpdateSessionDuration();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Timer UpdateSessionDuration Error: {ex}");
+                    }
+                };
+                sessionTimer.Start();
+            }
+            catch (Exception ex)
             {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            sessionTimer.Tick += (s, e) => UpdateSessionDuration();
-            sessionTimer.Start();
+                Console.WriteLine($"InitializeTimers Error: {ex}");
+            }
         }
 
         private void UpdateSessionDuration()
