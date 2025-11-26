@@ -10,9 +10,14 @@
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>false</PublishSingleFile>
-    <ApplicationIcon />
+    <ApplicationIcon>logo.ico</ApplicationIcon>
     <StartupObject />
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Resource Include="logo.png" />
+    <Resource Include="logo.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="7.0.0" />

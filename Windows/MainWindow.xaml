@@ -8,6 +8,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        Icon="/logo.ico"
         FontFamily="Segoe UI Variable Display, Segoe UI, Inter, -apple-system, sans-serif">
     
     <Window.Resources>
@@ -246,6 +247,10 @@
                     </Grid.ColumnDefinitions>
                     
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Logo Image -->
+                        <Image Source="/logo.png" Width="48" Height="48" Margin="0,0,15,0" 
+                               VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        
                         <StackPanel>
                             <TextBlock Text="EMSys - Engine Monitoring System" FontSize="26" FontWeight="Bold" 
                                        Foreground="{StaticResource TextPrimary}" FontFamily="Segoe UI">
